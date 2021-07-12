@@ -1,15 +1,22 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+invalid_link:
   id: 1
-  url: MyString
-  admin_id: MyString
+  url: cnn.com
+  admin_id: MyString_mystring
   active: false
   view_count: 1
 
-two:
-  id: 1
-  url: MyString
-  admin_id: MyString
+valid_link:
+  id: 2
+  url: http://cnn.com
+  admin_id: face_the_music
+  active: true
+  view_count: 1
+
+inactive_link:
+  id: 3
+  url: http://cnn.com
+  admin_id: face_the_music
   active: false
   view_count: 1

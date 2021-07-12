@@ -2,12 +2,39 @@ require "test_helper"
 
 class LinksControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @link = links(:one)
+    @invalid_record = links(:invalid_link)
+    @valid_record = links(:valid_link)
+    @inactive_record = links(:inactive_link)
   end
 
-  test "should get index" do
-    get links_url
-    assert_response :success
+  test "shouldn't get index" do
+    assert_raises(ActionController::RoutingError) do
+      get links_url
+    end
+  end
+  
+  test "should redirect shortlink" do
+    get redirection_url(Hashid.encode(@valid_record.id))
+    assert_redirected_to @valid_record.url
+  end
+
+  test "should throw 404 on NON active link" do
+    assert_raises(ActionController::RoutingError) do
+      get redirection_url(Hashid.encode(@inactive_record.id))
+    end
+  end
+
+  test "should create link" do
+    assert_difference('Link.count') do
+      post links_url, params: { link: { url: @valid_record.url } }
+    end
+
+    assert_redirected_to link_admin_path(Link.last.admin_id)
+  end
+
+  test "should increment link view_count on redirect" do
+    get redirection_url(Hashid.encode(@valid_record.id))
+    assert_equal(2, Link.find(@valid_record.id).view_count)
   end
 
   test "should get new" do
@@ -15,34 +42,19 @@ class LinksControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create link" do
-    assert_difference('Link.count') do
-      post links_url, params: { link: { active: @link.active, admin_id: @link.admin_id, id: @link.id, url: @link.url, view_count: @link.view_count } }
-    end
-
-    assert_redirected_to link_url(Link.last)
-  end
-
   test "should show link" do
-    get link_url(@link)
+    get link_admin_path(@invalid_record.admin_id)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_link_url(@link)
+    get link_admin_path(@invalid_record.admin_id)
     assert_response :success
   end
 
   test "should update link" do
-    patch link_url(@link), params: { link: { active: @link.active, admin_id: @link.admin_id, id: @link.id, url: @link.url, view_count: @link.view_count } }
-    assert_redirected_to link_url(@link)
+    patch link_url(@valid_record.admin_id), params: { link: { active: false } }
+    assert_redirected_to link_admin_path(@valid_record.admin_id)
   end
 
-  test "should destroy link" do
-    assert_difference('Link.count', -1) do
-      delete link_url(@link)
-    end
-
-    assert_redirected_to links_url
-  end
 end

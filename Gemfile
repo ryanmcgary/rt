@@ -28,6 +28,7 @@ gem 'jbuilder', '~> 2.7'
 
 
 gem 'hashids'
+gem 'rexml', '~> 3.2', '>= 3.2.4'
 
 
 
