@@ -1,0 +1,62 @@
+<% if @link.persisted? %>
+  <%= form_with(scope: :link, url: link_path(@link.admin_id), method: :patch) do |form| %>
+    <% if link.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(link.errors.count, "error") %> prohibited this link from being saved:</h2>
+
+        <ul>
+          <% link.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= form.label :url %>
+      <%= form.text_field :url %>
+    </div>
+    <% if @link.persisted? %>
+      <div class="field">
+        <%= form.label :active %>
+        <%= form.check_box :active %>
+      </div>
+    <% end %>
+
+
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+  <% end %>
+
+  <% if @link.persisted? %>
+    Shortened URL for sharing: <%= link_to "#{redirection_url(@link.short)}", redirection_url(@link.short) %><br>
+    views <%= @link.view_count %>
+  <% end %>
+  <br>
+
+<% else %>
+  <%= form_with(model: link) do |form| %>
+    <% if link.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(link.errors.count, "error") %> prohibited this link from being saved:</h2>
+
+        <ul>
+          <% link.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= form.label :url %>
+      <%= form.text_field :url %>
+    </div>
+
+
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+  <% end %>
+<% end %>
